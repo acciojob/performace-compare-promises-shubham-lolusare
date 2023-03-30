@@ -12,51 +12,37 @@ const apiUrls = [
   "https://jsonplaceholder.typicode.com/todos/10",
 ];
 
-// Function to fetch data using Promise.all()
-function fetchDataWithPromiseAll() {
-  const startTime = performance.now();
+// You can write your code here
+const outputAll = document.getElementById('output-all');
+const outputAny = document.getElementById('output-any');
 
-  Promise.all(apiUrls.map((url) => fetch(url)))
-    .then((responses) => Promise.all(responses.map((res) => res.json())))
-    .then((data) => {
-      const endTime = performance.now();
-      document.getElementById("output-all").innerHTML = endTime - startTime;
-    })
-    .catch((error) => console.log(error));
+function fetchData(url) {
+  return fetch(url).then(response => response.json());
 }
 
-// Function to fetch data using Promise.any()
-function fetchDataWithPromiseAny() {
-  const startTime = performance.now();
-
-  Promise.any(apiUrls.map((url) => fetch(url).then((res) => res.json())))
-    .then((data) => {
-      const endTime = performance.now();
-      document.getElementById("output-any").innerHTML = endTime - startTime;
+function fetchAll() {
+  const start = performance.now();
+  Promise.all(apiUrls.map(fetchData))
+    .then(data => {
+      const end = performance.now();
+      const timeTaken = end - start;
+      outputAll.innerText = `${timeTaken} ms`;
+      console.log('Promise.all took', timeTaken, 'ms');
     })
-    .catch((
-// Function to fetch data from multiple APIs using Promise.all and Promise.any
-function fetchData() {
-const startTimeAll = Date.now();
-const promiseAll = Promise.all(apiUrls.map(url => fetch(url)));
-promiseAll
-.then(responses => {
-const endTimeAll = Date.now();
-const timeTakenAll = endTimeAll - startTimeAll;
-document.getElementById("output-all").textContent = timeTakenAll;
-})
-.catch(error => console.log(error));
-
-const startTimeAny = Date.now();
-const promiseAny = Promise.any(apiUrls.map(url => fetch(url)));
-promiseAny
-.then(response => {
-const endTimeAny = Date.now();
-const timeTakenAny = endTimeAny - startTimeAny;
-document.getElementById("output-any").textContent = timeTakenAny;
-})
-.catch(error => console.log(error));
+    .catch(error => console.log(error));
 }
 
-// Call the fetchData function
-fetchData();
+function fetchAny() {
+  const start = performance.now();
+  Promise.any(apiUrls.map(fetchData))
+    .then(data => {
+      const end = performance.now();
+      const timeTaken = end - start;
+      outputAny.innerText = `${timeTaken} ms`;
+      console.log('Promise.any took', timeTaken, 'ms');
+    })
+    .catch(error => console.log(error));
+}
+
+fetchAll();
+fetchAny();
